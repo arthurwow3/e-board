@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GamesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -38,5 +39,12 @@ Route::middleware('auth')->group(function () {
 Route::get('/demo', function () {
     return Inertia::render('PrimeVueDemo');
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+
+});
+Route::resource('games', GamesController::class)->only(['index', 'create', 'store']);
+
 
 require __DIR__.'/auth.php';

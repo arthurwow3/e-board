@@ -1,62 +1,47 @@
+
 <template>
-    <div class="p-6">
-        <h2 class="text-2xl mb-4">🎨 PrimeVue com tema Aura</h2>
-
-        <div class="p-fluid grid formgrid">
-            <div class="field col-12 md:col-6">
-                <label for="nome">Nome</label>
-                <InputText id="nome" v-model="form.nome" />
+    <Toast />
+    <ConfirmPopup group="templating">
+        <template #message="slotProps">
+            <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700 p-4 mb-4 pb-0">
+                <i :class="slotProps.message.icon" class="text-6xl text-primary-500"></i>
+                <p>{{ slotProps.message.message }}</p>
             </div>
-
-            <div class="field col-12 md:col-6">
-                <label for="email">Email</label>
-                <InputText id="email" type="email" v-model="form.email" />
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <label for="data">Data</label>
-                <Calendar id="data" v-model="form.data" showIcon />
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <label for="opcao">Opção</label>
-                <Dropdown
-                    id="opcao"
-                    v-model="form.opcao"
-                    :options="opcoes"
-                    optionLabel="label"
-                    placeholder="Selecione"
-                />
-            </div>
-
-            <div class="field col-12">
-                <Button label="Enviar" icon="pi pi-check" @click="enviar" />
-            </div>
-        </div>
+        </template>
+    </ConfirmPopup>
+    <div class="card flex justify-center">
+        <Button @click="showTemplate($event)" label="Save"></Button>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
-import Button from 'primevue/button';
+import {useConfirm} from "primevue/useconfirm";
+import {useToast} from "primevue/usetoast";
 
-const form = ref({
-    nome: '',
-    email: '',
-    data: null,
-    opcao: null
-});
+const confirm = useConfirm();
+const toast = useToast();
 
-const opcoes = [
-    { label: 'Opção A', value: 'A' },
-    { label: 'Opção B', value: 'B' },
-    { label: 'Opção C', value: 'C' }
-];
-
-function enviar() {
-    console.log('Form enviado:', form.value);
+const showTemplate = (event) => {
+    confirm.require({
+        target: event.currentTarget,
+        group: 'templating',
+        message: 'Please confirm to proceed moving forward.',
+        icon: 'pi pi-exclamation-circle',
+        rejectProps: {
+            icon: 'pi pi-times',
+            label: 'Cancel',
+            outlined: true
+        },
+        acceptProps: {
+            icon: 'pi pi-check',
+            label: 'Confirm'
+        },
+        accept: () => {
+            toast.add({severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000});
+        },
+        reject: () => {
+            toast.add({severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000});
+        }
+    });
 }
 </script>

@@ -1,49 +1,53 @@
-<script setup>
-import { computed } from 'vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-
-const props = defineProps({
-    status: String,
-});
-
-const form = useForm({});
-
-const submit = () => {
-    form.post(route('verification.send'));
-};
-
-const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
-</script>
-
 <template>
     <GuestLayout>
-        <Head title="Email Verification" />
+        <Card style="width: 100%; max-width: 480px" class="shadow-4 border-round-xl">
+            <template #title>
+                <div class="text-center text-xl font-semibold text-gray-900">
+                    Verificação de E-mail
+                </div>
+            </template>
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link
-            we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
+            <template #content>
+                <p class="mb-4 text-gray-800">
+                    Enviamos um link de verificação para seu endereço de e-mail.
+                    Por favor, clique no link para ativar sua conta.
+                </p>
 
-        <div class="mb-4 font-medium text-sm text-green-600" v-if="verificationLinkSent">
-            A new verification link has been sent to the email address you provided during registration.
-        </div>
+                <p v-if="status === 'verification-link-sent'" class="text-green-600 mb-3">
+                    ✅ Um novo link foi enviado para o seu e-mail.
+                </p>
 
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </PrimaryButton>
+                <form @submit.prevent="resend">
+                    <Button type="submit" label="Reenviar e-mail de verificação" class="w-full" />
+                </form>
 
-                <Link
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >Log Out</Link
-                >
-            </div>
-        </form>
+                <form @submit.prevent="logout" class="mt-3 text-center">
+                    <Button type="submit" label="Sair" severity="secondary" class="w-full" />
+                </form>
+            </template>
+        </Card>
     </GuestLayout>
 </template>
+
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+import GuestLayout from '@/Layouts/GuestLayout.vue'
+
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+
+defineProps({
+    status: String
+})
+
+const resendForm = useForm()
+const logoutForm = useForm()
+
+function resend() {
+    resendForm.post(route('verification.send'))
+}
+
+function logout() {
+    logoutForm.post(route('logout'))
+}
+</script>

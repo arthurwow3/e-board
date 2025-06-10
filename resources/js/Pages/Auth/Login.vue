@@ -1,90 +1,80 @@
+<template>
+    <GuestLayout>
+        <Card style="width: 100%; max-width: 400px" class="shadow-4 border-round-xl">
+            <template #title>
+                <div class="text-center text-xl font-semibold text-gray-900">
+                    Entrar no e-Board
+                </div>
+            </template>
+
+            <template #content>
+                <form @submit.prevent="submit" class="flex flex-col gap-4 text-gray-900">
+                    <div>
+                        <label for="email" class="block mb-1 text-sm">Email</label>
+                        <InputText id="email" v-model="form.email" type="email" autocomplete="username" class="w-full" />
+                        <small v-if="form.errors.email" class="text-red-500">{{ form.errors.email }}</small>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block mb-1 text-sm">Senha</label>
+                        <Password
+                            id="password"
+                            v-model="form.password"
+                            toggleMask
+                            :feedback="false"
+                            autocomplete="current-password"
+                            inputClass="w-full pr-10"
+                            class="w-full"
+                        />
+                        <small v-if="form.errors.password" class="text-red-500">{{ form.errors.password }}</small>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <Checkbox v-model="form.remember" :binary="true" inputId="remember" />
+                        <label for="remember" class="text-sm">Lembrar de mim</label>
+                    </div>
+
+                    <Button type="submit" label="Entrar" class="w-full mt-2" />
+
+                    <div class="flex justify-between mt-3 text-sm">
+                        <Link v-if="canResetPassword" :href="route('password.request')" class="text-blue-500 hover:underline">
+                            Esqueceu a senha?
+                        </Link>
+                        <Link :href="route('register')" class="text-blue-500 hover:underline">
+                            Me registrar
+                        </Link>
+                    </div>
+                </form>
+            </template>
+        </Card>
+    </GuestLayout>
+</template>
+
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
+
+import GuestLayout from '@/Layouts/GuestLayout.vue'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Checkbox from 'primevue/checkbox'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
 
 defineProps({
     canResetPassword: Boolean,
-    status: String,
-});
+    status: String
+})
 
 const form = useForm({
     email: '',
     password: '',
-    remember: false,
-});
+    remember: false
+})
 
-const submit = () => {
+function submit() {
     form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
-};
+        onFinish: () => form.reset('password')
+    })
+}
 </script>
-
-<template>
-    <GuestLayout>
-        <Head title="Log in" />
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
-</template>

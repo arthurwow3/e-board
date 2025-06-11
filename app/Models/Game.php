@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Game extends Model
 {
@@ -36,6 +37,11 @@ class Game extends Model
         'asset_costs' => 'decimal:2',
         'sleeves' => 'integer',
     ];
+
+    public function getIconUrlAttribute()
+    {
+        return $this->icon ? Storage::url($this->icon) : null;
+    }
 
     public function creator(): BelongsTo
     {

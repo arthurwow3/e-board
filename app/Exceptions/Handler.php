@@ -46,5 +46,9 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (GameStoreException $e, $request) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        });
     }
 }

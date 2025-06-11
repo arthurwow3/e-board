@@ -41,10 +41,10 @@ Route::get('/demo', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
+    Route::resource('games', GamesController::class)->only(['index', 'create', 'store','destroy']);
 
 });
-Route::resource('games', GamesController::class)->only(['index', 'create', 'store']);
+
 
 
 require __DIR__.'/auth.php';

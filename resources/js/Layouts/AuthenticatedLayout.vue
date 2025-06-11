@@ -18,6 +18,8 @@ import { ref } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Sidebar from '@/components/DefaulComponents/Sidebar.vue'
 import Navbar from '@/components/DefaulComponents/Navbar.vue'
+import { useToast } from 'primevue/usetoast';
+import { onMounted } from 'vue';
 
 const isCollapsed = ref(false)
 const toggleSidebar = () => {
@@ -27,4 +29,5 @@ const toggleSidebar = () => {
 const page = usePage()
 const user = page.props.auth.user
 const appName = 'e-Board'
+
 </script>

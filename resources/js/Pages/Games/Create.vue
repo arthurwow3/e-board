@@ -4,7 +4,7 @@
             <template #title>Cadastro de Jogo</template>
 
             <template #content>
-                <hr class="mb-4 border-gray-300" />
+                <hr class="mb-4 border-gray-300"/>
                 <Form
                     ref="formRef"
                     v-slot="$form"
@@ -24,7 +24,7 @@
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
                                 <label for="title" class="block text-sm text-gray-500 mb-1">Título</label>
-                                <InputText id="title" name="title" class="w-full" />
+                                <InputText id="title" name="title" class="w-full"/>
                                 <Message v-if="$form.title?.invalid" severity="error" size="small" variant="simple">
                                     {{ $form.title.error.message }}
                                 </Message>
@@ -32,36 +32,44 @@
 
                             <div>
                                 <label for="publisher_id" class="block text-sm text-gray-500 mb-1">Editora</label>
-                                <Select id="publisher_id" name="publisher_id" :options="publisherOptions" optionLabel="name" optionValue="id" placeholder="Selecione a Editora" class="w-full" />
-                                <Message v-if="$form.publisher_id?.invalid" severity="error" size="small" variant="simple">
+                                <Select id="publisher_id" name="publisher_id" :options="publisherOptions"
+                                        optionLabel="name" optionValue="id" placeholder="Selecione a Editora"
+                                        class="w-full"/>
+                                <Message v-if="$form.publisher_id?.invalid" severity="error" size="small"
+                                         variant="simple">
                                     {{ $form.publisher_id.error.message }}
                                 </Message>
                             </div>
 
                             <div>
                                 <label for="genre_id" class="block text-sm text-gray-500 mb-1">Gênero</label>
-                                <Select id="genre_id" name="genre_id" :options="genreOptions" optionLabel="name" optionValue="id" placeholder="Selecione um Gênero" class="w-full" />
+                                <Select id="genre_id" name="genre_id" :options="genreOptions" optionLabel="name"
+                                        optionValue="id" placeholder="Selecione um Gênero" class="w-full"/>
                                 <Message v-if="$form.genre_id?.invalid" severity="error" size="small" variant="simple">
                                     {{ $form.genre_id.error.message }}
                                 </Message>
                             </div>
 
                             <div>
-                                <label for="players_range" class="block text-sm text-gray-500 mb-2">Número de Jogadores</label>
-                                <Slider id="players_range" name="players_range" :min="0" :max="10" range class="w-full" />
+                                <label for="players_range" class="block text-sm text-gray-500 mb-2">Número de
+                                    Jogadores</label>
+                                <Slider id="players_range" name="players_range" :min="0" :max="10" range
+                                        class="w-full"/>
                                 <div class="flex justify-between text-sm text-gray-400 mt-1">
                                     <span>Mín: {{ $form.players_range?.value?.[0] ?? 0 }}</span>
                                     <span>Máx: {{ $form.players_range?.value?.[1] ?? 0 }}</span>
                                 </div>
-                                <Message v-if="$form.players_range?.invalid" severity="error" size="small" variant="simple">
+                                <Message v-if="$form.players_range?.invalid" severity="error" size="small"
+                                         variant="simple">
                                     {{ $form.players_range.error.message }}
                                 </Message>
                             </div>
 
                             <div class="md:col-span-2">
                                 <label for="description" class="block text-sm text-gray-500 mb-1">Descrição</label>
-                                <Textarea id="description" name="description" autoResize rows="4" class="w-full" />
-                                <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
+                                <Textarea id="description" name="description" autoResize rows="4" class="w-full"/>
+                                <Message v-if="$form.description?.invalid" severity="error" size="small"
+                                         variant="simple">
                                     {{ $form.description.error.message }}
                                 </Message>
                             </div>
@@ -70,7 +78,7 @@
 
                     <!-- Financeiro -->
                     <section class="mb-8">
-                        <hr class="mb-4 border-gray-300" />
+                        <hr class="mb-4 border-gray-300"/>
                         <div class="flex items-center gap-2 mb-4">
                             <i class="pi pi-dollar text-gray-600"></i>
                             <h2 class="text-lg font-semibold text-gray-700">Financeiro</h2>
@@ -78,30 +86,39 @@
 
                         <div class="grid md:grid-cols-4 gap-4">
                             <div>
-                                <label for="purchase_price" class="block text-sm text-gray-500 mb-1">Preço de Compra (R$)</label>
-                                <InputNumber id="purchase_price" name="purchase_price" mode="currency" currency="BRL" locale="pt-BR" class="w-full" />
-                                <Message v-if="$form.purchase_price?.invalid" severity="error" size="small" variant="simple">
+                                <label for="purchase_price" class="block text-sm text-gray-500 mb-1">Preço de Compra
+                                    (R$)</label>
+                                <InputNumber id="purchase_price" name="purchase_price" mode="currency" currency="BRL"
+                                             locale="pt-BR" class="w-full"/>
+                                <Message v-if="$form.purchase_price?.invalid" severity="error" size="small"
+                                         variant="simple">
                                     {{ $form.purchase_price.error.message }}
                                 </Message>
                             </div>
                             <div>
-                                <label for="purchase_date" class="block text-sm text-gray-500 mb-1">Data de Compra</label>
-                                <Calendar id="purchase_date" name="purchase_date" dateFormat="dd/mm/yy" showIcon class="w-full" />
+                                <label for="purchase_date" class="block text-sm text-gray-500 mb-1">Data de
+                                    Compra</label>
+                                <Calendar id="purchase_date" name="purchase_date" dateFormat="dd/mm/yy" showIcon
+                                          class="w-full"/>
                             </div>
                             <div>
-                                <label for="sale_price" class="block text-sm text-gray-500 mb-1">Preço de Venda (R$)</label>
-                                <InputNumber id="sale_price" name="sale_price" mode="currency" currency="BRL" locale="pt-BR" class="w-full" />
+                                <label for="sale_price" class="block text-sm text-gray-500 mb-1">Preço de Venda
+                                    (R$)</label>
+                                <InputNumber id="sale_price" name="sale_price" mode="currency" currency="BRL"
+                                             locale="pt-BR" class="w-full"/>
                             </div>
                             <div>
-                                <label for="asset_costs" class="block text-sm text-gray-500 mb-1">Custos com Assets (R$)</label>
-                                <InputNumber id="asset_costs" name="asset_costs" mode="currency" currency="BRL" locale="pt-BR" class="w-full" />
+                                <label for="asset_costs" class="block text-sm text-gray-500 mb-1">Custos com Assets
+                                    (R$)</label>
+                                <InputNumber id="asset_costs" name="asset_costs" mode="currency" currency="BRL"
+                                             locale="pt-BR" class="w-full"/>
                             </div>
                         </div>
                     </section>
 
                     <!-- Outros -->
                     <section>
-                        <hr class="mb-4 border-gray-300" />
+                        <hr class="mb-4 border-gray-300"/>
                         <div class="flex items-center gap-2 mb-4">
                             <i class="pi pi-cog text-gray-600"></i>
                             <h2 class="text-lg font-semibold text-gray-700">Outros</h2>
@@ -110,31 +127,38 @@
 
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label for="sleeves" class="block text-sm text-gray-500 mb-1">Quantidade de Sleeves</label>
-                                <InputNumber id="sleeves" name="sleeves" :min="0" class="w-full" />
+                                <label for="sleeves" class="block text-sm text-gray-500 mb-1">Quantidade de
+                                    Sleeves</label>
+                                <InputNumber id="sleeves" name="sleeves" :min="0" class="w-full"/>
                             </div>
                             <div>
-                                <label for="sleeve_size" class="block text-sm text-gray-500 mb-1">Tamanho da Sleeve</label>
-                                <Select id="sleeve_size" name="sleeve_size" :options="sleeveSizes" placeholder="Selecione o Tamanho" class="w-full" />
+                                <label for="sleeve_size" class="block text-sm text-gray-500 mb-1">Tamanho da
+                                    Sleeve</label>
+                                <Select id="sleeve_size" name="sleeve_size" :options="sleeveSizes"
+                                        placeholder="Selecione o Tamanho" class="w-full"/>
                             </div>
                             <div class="md:col-span-2">
                                 <label for="images" class="block text-sm text-gray-500 mb-1">Imagens do Jogo</label>
-                                <input type="file" id="images" name="images" multiple accept="image/*" @change="handleFileChange($event, 'images')" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200" />
+                                <input type="file" id="images" name="images" multiple accept="image/*"
+                                       @change="handleFileChange($event, 'images')"
+                                       class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
                             </div>
                             <div class="md:col-span-2">
                                 <label for="icon" class="block text-sm text-gray-500 mb-1">Ícone do Jogo</label>
-                                <input type="file" id="icon" name="icon" accept="image/*" @change="handleFileChange($event, 'icon')" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200" />
+                                <input type="file" id="icon" name="icon" accept="image/*"
+                                       @change="handleFileChange($event, 'icon')"
+                                       class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
                             </div>
                         </div>
                     </section>
 
                     <div class="flex justify-end mt-8">
-                        <Button label="Salvar" icon="pi pi-save"  type="submit" class="w-full md:w-auto bg-green-600 text-white" />
+                        <Button label="Salvar" icon="pi pi-save" type="submit"
+                                class="w-full md:w-auto bg-green-600 text-white"/>
                     </div>
                 </Form>
 
-                <Toast />
-                <ConfirmDialog />
+                <Toast/>
             </template>
         </Card>
     </AuthenticatedLayout>
@@ -159,9 +183,12 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Toast from 'primevue/toast'
 import {useToast} from 'primevue/usetoast'
 import {useConfirm} from 'primevue/useconfirm'
+import {onMounted} from 'vue';
+import {usePage} from '@inertiajs/vue3';
 
 const toast = useToast()
 const confirm = useConfirm()
+const page = usePage();
 
 const activeTab = ref(0)
 const tabs = [
@@ -223,17 +250,17 @@ const resolver = ({values}) => {
 }
 
 
-// const onFormSubmit = ({ valid }, {vaalues}) => {
-//     console.log( values)';'
-//     if (valid) {
-//         const values = Object.fromEntries(
-//             Object.entries($form.states).map(([key, state]) => [key, state.value])
-//         )
-//         Object.entries(values).forEach(([k, v]) => form.set(k, v))
-//         confirmarSave()
-//     }
-// }
+onMounted(() => {
+    const flash = page.props?.flash || {};
 
+    if (flash.success) {
+        toast.add({severity: 'success', summary: 'Sucesso', detail: flash.success, life: 3000});
+    }
+
+    if (flash.error) {
+        toast.add({severity: 'error', summary: 'Erro', detail: flash.error, life: 4000});
+    }
+});
 
 const onFormSubmit = (e) => {
     console.log('valid:', e.valid);
@@ -262,8 +289,8 @@ const onFormSubmit = (e) => {
 }
 
 
-const confirmarSave = () =>{
-
+const confirmarSave = () => {
+    console.log(123);
     confirm.require({
         message: 'Deseja realmente salvar esse jogo?',
         header: 'Confirmação',

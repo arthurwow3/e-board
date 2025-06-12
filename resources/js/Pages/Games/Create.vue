@@ -1,7 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <Card>
-            <template #title>Cadastro de Jogo</template>
+            <template #title>{{ isEditMode ? 'Editar Jogo' : 'Cadastro de Jogo' }}</template>
 
             <template #content>
                 <hr class="mb-4 border-gray-300"/>
@@ -143,11 +143,24 @@
                                        @change="handleFileChange($event, 'images')"
                                        class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
                             </div>
+                            <div v-if="form.image_previews.length" class="grid grid-cols-2 gap-4 my-4">
+                                <div v-for="(img, index) in form.image_previews" :key="img.id" class="relative">
+                                    <img :src="img.url" class="w-full h-32 object-cover rounded shadow" />
+                                    <Button icon="pi pi-times"
+                                            class="absolute top-1 right-1 p-button-rounded p-button-danger p-button-sm"
+                                            @click="removeImagePreview(index)" />
+                                </div>
+                            </div>
                             <div class="md:col-span-2">
                                 <label for="icon" class="block text-sm text-gray-500 mb-1">Ícone do Jogo</label>
                                 <input type="file" id="icon" name="icon" accept="image/*"
                                        @change="handleFileChange($event, 'icon')"
                                        class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
+                            </div>
+                            <div v-if="form.icon_preview" class="mb-4">
+                                <img :src="form.icon_preview" alt="Ícone atual" class="w-32 h-32 object-cover rounded" />
+                                <Button label="Remover Ícone" icon="pi pi-times" severity="danger" outlined class="mt-2"
+                                        @click="form.icon_preview = null" />
                             </div>
                         </div>
                     </section>
@@ -166,118 +179,91 @@
 
 
 <script setup>
-import {ref} from 'vue'
-import {useForm} from '@inertiajs/vue3'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import Card from 'primevue/card'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Select from 'primevue/select'
-import Slider from 'primevue/slider'
-import Calendar from 'primevue/calendar'
-import InputNumber from 'primevue/inputnumber'
-import Message from 'primevue/message'
-import {Form} from '@primevue/forms'
-import ConfirmDialog from 'primevue/confirmdialog'
-import Toast from 'primevue/toast'
-import {useToast} from 'primevue/usetoast'
-import {useConfirm} from 'primevue/useconfirm'
-import {onMounted} from 'vue';
-import {usePage} from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { ref, computed, onMounted } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
-const toast = useToast()
-const confirm = useConfirm()
+const toast = useToast();
+const confirm = useConfirm();
 const page = usePage();
 
-const activeTab = ref(0)
-const tabs = [
-    {label: 'Características', icon: 'pi pi-info-circle'},
-    {label: 'Financeiro', icon: 'pi pi-dollar'},
-    {label: 'Outros', icon: 'pi pi-cog'}
-]
-
-const publisherOptions = [
-    {id: 1, name: 'Galápagos'},
-    {id: 2, name: 'Devir'},
-    {id: 3, name: 'Meeple BR'}
-]
-
-const genreOptions = [
-    {id: 1, name: 'Estratégia'},
-    {id: 2, name: 'Party Game'},
-    {id: 3, name: 'Família'},
-    {id: 4, name: 'Cooperativo'}
-]
-
-const sleeveSizes = ['P', 'M', 'G', 'GG']
-
-const form = useForm({
-    title: null,
-    description: null,
-    players_range: [2, 6],
-    publisher_id: null,
-    genre_id: null,
-    purchase_price: null,
-    purchase_date: '',
-    sale_price: null,
-    sleeves: null,
-    asset_costs: null,
-    sleeve_size: null,
-    icon: null,
-    images: []
-})
-
-const handleFileChange = (event, field) => {
-    const files = event.target.files
-    if (field === 'images') {
-        form.images = Array.from(files)
-    } else if (field === 'icon') {
-        form.icon = files[0] || null
-    }
-}
-const resolver = ({values}) => {
-    const errors = {}
-    if (!values.title) errors.title = [{message: 'Título é obrigatório.'}]
-    if (!values.publisher_id) errors.publisher_id = [{message: 'Editora é obrigatória.'}]
-    if (!values.genre_id) errors.genre_id = [{message: 'Gênero é obrigatório.'}]
-    if (!values.description) errors.description = [{message: 'Descrição é obrigatória.'}]
-    if (!values.purchase_price) errors.purchase_price = [{message: 'Preço de compra é obrigatória.'}]
-    if (!values.players_range || values.players_range[0] === values.players_range[1]) {
-        errors.players_range = [{message: 'Defina um intervalo válido de jogadores.'}]
-    }
-    return {errors}
-}
-
-
-onMounted(() => {
-    const flash = page.props?.flash || {};
-
-    if (flash.success) {
-        toast.add({severity: 'success', summary: 'Sucesso', detail: flash.success, life: 3000});
-    }
-
-    if (flash.error) {
-        toast.add({severity: 'error', summary: 'Erro', detail: flash.error, life: 4000});
-    }
+const props = defineProps({
+    game: Object
 });
 
-const onFormSubmit = (e) => {
-    console.log('valid:', e.valid);
-    console.log('states:', e.states);
+const isEditMode = computed(() => !!props.game);
 
+// Combos fixos
+const publisherOptions = [
+    { id: 1, name: 'Galápagos' },
+    { id: 2, name: 'Devir' },
+    { id: 3, name: 'Meeple BR' }
+];
+
+const genreOptions = [
+    { id: 1, name: 'Estratégia' },
+    { id: 2, name: 'Party Game' },
+    { id: 3, name: 'Família' },
+    { id: 4, name: 'Cooperativo' }
+];
+
+const sleeveSizes = ['P', 'M', 'G', 'GG'];
+
+const form = useForm({
+    title: props.game?.title ?? '',
+    description: props.game?.description ?? '',
+    players_range: props.game ? [props.game.players_min ?? 0, props.game.players_max ?? 0] : [2, 6],
+    publisher_id: props.game?.publisher_id ?? null,
+    genre_id: props.game?.genre_id ?? null,
+    purchase_price: props.game?.purchase_price ?? null,
+    purchase_date: props.game?.purchase_date ?? '',
+    sale_price: props.game?.sale_price ?? null,
+    sleeves: props.game?.sleeves ?? null,
+    asset_costs: props.game?.asset_costs ?? null,
+    sleeve_size: props.game?.sleeve_size ?? null,
+    icon: null,
+    icon_preview: props.game?.icon_url ?? null,
+    images: [],
+    image_previews: props.game?.images ?? [] // array de { id, url }
+});
+
+const removeImagePreview = (index) => {
+    form.image_previews.splice(index, 1);
+};
+
+const handleFileChange = (event, field) => {
+    const files = event.target.files;
+    if (field === 'images') {
+        form.images = Array.from(files);
+    } else if (field === 'icon') {
+        form.icon = files[0] || null;
+    }
+};
+
+const resolver = ({ values }) => {
+    const errors = {};
+    if (!values.title) errors.title = [{ message: 'Título é obrigatório.' }];
+    if (!values.publisher_id) errors.publisher_id = [{ message: 'Editora é obrigatória.' }];
+    if (!values.genre_id) errors.genre_id = [{ message: 'Gênero é obrigatório.' }];
+    if (!values.description) errors.description = [{ message: 'Descrição é obrigatória.' }];
+    if (!values.purchase_price) errors.purchase_price = [{ message: 'Preço de compra é obrigatório.' }];
+    if (!values.players_range || values.players_range[0] === values.players_range[1]) {
+        errors.players_range = [{ message: 'Defina um intervalo válido de jogadores.' }];
+    }
+    return { errors };
+};
+
+const onFormSubmit = (e) => {
     if (e.valid && e.states) {
         const values = Object.fromEntries(
             Object.entries(e.states).map(([key, state]) => [key, state.value])
         );
-        console.log('extracted values:', values);
-
-        // Atribui valores diretamente ao objeto `form`
         Object.entries(values).forEach(([key, val]) => {
             form[key] = val;
         });
-
-        confirmarSave(); // segue para confirmação e post
+        confirmarSave();
     } else {
         toast.add({
             severity: 'error',
@@ -286,14 +272,14 @@ const onFormSubmit = (e) => {
             life: 3000
         });
     }
-}
-
+};
 
 const confirmarSave = () => {
-    console.log(123);
     confirm.require({
-        message: 'Deseja realmente salvar esse jogo?',
-        header: 'Confirmação',
+        message: isEditMode.value
+            ? 'Deseja realmente atualizar este jogo?'
+            : 'Deseja realmente salvar este jogo?',
+        header: isEditMode.value ? 'Atualizar Jogo' : 'Salvar Jogo',
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
             label: 'Cancelar',
@@ -301,40 +287,67 @@ const confirmarSave = () => {
             outlined: true
         },
         acceptProps: {
-            label: 'Sim'
+            label: isEditMode.value ? 'Atualizar' : 'Salvar'
         },
         accept: () => {
-            postGame()
+            postGame();
         },
         reject: () => {
-            toast.add({severity: 'warn', summary: 'Cancelado', detail: 'Cadastro cancelado', life: 3000})
+            toast.add({
+                severity: 'warn',
+                summary: 'Cancelado',
+                detail: isEditMode.value ? 'Atualização cancelada' : 'Cadastro cancelado',
+                life: 3000
+            });
         }
-    })
-}
+    });
+};
 
-
-const postGame = () => {
-    console.log('Dados enviados:', form.data())
-    form.post(route('games.store'), {
+const postGame = async () => {
+    const options = {
         preserveScroll: true,
         forceFormData: true,
         onSuccess: () => {
             toast.add({
                 severity: 'success',
                 summary: 'Sucesso',
-                detail: 'Jogo cadastrado com sucesso!',
+                detail: isEditMode.value
+                    ? 'Jogo atualizado com sucesso!'
+                    : 'Jogo cadastrado com sucesso!',
                 life: 3000
-            })
-            form.reset()
+            });
+
+            if (!isEditMode.value) {
+                form.reset();
+            }
         },
         onError: () => {
             toast.add({
                 severity: 'error',
                 summary: 'Erro',
-                detail: 'Erro ao cadastrar o jogo.',
+                detail: isEditMode.value
+                    ? 'Erro ao atualizar o jogo.'
+                    : 'Erro ao cadastrar o jogo.',
                 life: 3000
-            })
+            });
         }
-    })
-}
+    };
+
+    if (isEditMode.value) {
+        form.image_previews.forEach((img, index) => {
+            form[`image_previews[${index}][id]`] = img.id;
+            form[`image_previews[${index}][url]`] = img.url;
+        });
+        await form.post(route('games.update', props.game.id), options);
+
+        form.image_previews.forEach((img, index) => {
+            delete form[`image_previews[${index}][id]`];
+            delete form[`image_previews[${index}][url]`];
+        });
+
+    } else {
+        await form.post(route('games.store'), options);
+    }
+};
 </script>
+

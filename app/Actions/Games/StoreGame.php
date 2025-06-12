@@ -6,9 +6,11 @@ use App\Exceptions\GameStoreException;
 use App\Models\Game;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class StoreGame
 {
+    use AsAction;
     public function handle(array $data)
     {
         try {

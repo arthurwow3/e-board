@@ -40,9 +40,12 @@ Route::get('/demo', function () {
     return Inertia::render('PrimeVueDemo');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('games', GamesController::class)->only(['index', 'create', 'store','destroy']);
 
+## GAMES ##
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('games', GamesController::class)
+        ->only(['index', 'create', 'store', 'destroy', 'edit']);
+    Route::post('games/{game}', [GamesController::class, 'update'])->name('games.update');
 });
 
 

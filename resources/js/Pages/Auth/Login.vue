@@ -11,8 +11,7 @@
                 <form @submit.prevent="submit" class="flex flex-col gap-4 text-gray-900">
                     <div>
                         <label for="email" class="block mb-1 text-sm">Email</label>
-                        <InputText id="email" v-model="form.email" type="email" autocomplete="username" class="w-full" />
-                        <small v-if="form.errors.email" class="text-red-500">{{ form.errors.email }}</small>
+                        <InputText id="email" v-model="form.email" type="email" required autocomplete="username" class="w-full" />
                     </div>
 
                     <div>
@@ -25,8 +24,8 @@
                             autocomplete="current-password"
                             inputClass="w-full pr-10"
                             class="w-full"
+                            required
                         />
-                        <small v-if="form.errors.password" class="text-red-500">{{ form.errors.password }}</small>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -35,6 +34,12 @@
                     </div>
 
                     <Button type="submit" label="Entrar" class="w-full mt-2" />
+                    <small
+                        v-if="form.errors.email"
+                        class="text-red-500 text-sm text-center mt-2"
+                    >
+                        {{ form.errors.email }}
+                    </small>
 
                     <div class="flex justify-between mt-3 text-sm">
                         <Link v-if="canResetPassword" :href="route('password.request')" class="text-blue-500 hover:underline">

@@ -31,16 +31,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        try {
-            $request->authenticate();
-            $request->session()->regenerate();
+        $request->authenticate();
 
-            return redirect()->intended(RouteServiceProvider::HOME);
-        } catch (ValidationException $e) {
-            return Inertia::render('Auth/Login', [
-                'errors' => $e->errors()
-            ])->withViewData(['errors' => $e->errors()]);
-        }
+        $request->session()->regenerate();
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**

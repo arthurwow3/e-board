@@ -2,7 +2,6 @@
 namespace App\Actions\Games;
 
 use App\Models\Game;
-use App\Exceptions\GameStoreException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -59,7 +58,7 @@ class UpdateGame
                 'dados' => $data,
             ]);
 
-            throw new GameStoreException('Não foi possível atualizar o jogo.');
+            throw new \Exception('Não foi possível atualizar o jogo.');
         }
     }
 }

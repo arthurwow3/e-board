@@ -2,7 +2,6 @@
 
 namespace App\Actions\Games;
 
-use App\Exceptions\GameStoreException;
 use App\Models\Game;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -55,7 +54,7 @@ class StoreGame
                 'dados' => $data,
             ]);
 
-            throw new GameStoreException('Não foi possível cadastrar o jogo.');
+            throw new \Exception('Não foi possível cadastrar o jogo.');
         }
     }
 }

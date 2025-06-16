@@ -8,24 +8,42 @@
             </template>
 
             <template #content>
-                <form @submit.prevent="submit" class="flex flex-col gap-4 text-gray-900">
+                <Form
+                    as="form"
+                    v-slot="$form"
+                    :initial-values="form"
+                    :resolver="resolver"
+                    @submit="onSubmit"
+                    class="flex flex-col gap-4 text-gray-900"
+                >
                     <div>
                         <label for="email" class="block mb-1 text-sm">Email</label>
-                        <InputText id="email" v-model="form.email" type="email" required autocomplete="username" class="w-full" />
+                        <InputText
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="username"
+                            class="w-full"
+                        />
+                        <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
+                            {{ $form.email.error.message }}
+                        </Message>
                     </div>
 
                     <div>
                         <label for="password" class="block mb-1 text-sm">Senha</label>
                         <Password
                             id="password"
-                            v-model="form.password"
+                            name="password"
                             toggleMask
                             :feedback="false"
                             autocomplete="current-password"
                             inputClass="w-full pr-10"
                             class="w-full"
-                            required
                         />
+                        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
+                            {{ $form.password.error.message }}
+                        </Message>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -34,12 +52,23 @@
                     </div>
 
                     <Button type="submit" label="Entrar" class="w-full mt-2" />
-                    <small
-                        v-if="form.errors.email"
-                        class="text-red-500 text-sm text-center mt-2"
-                    >
-                        {{ form.errors.email }}
-                    </small>
+
+                    <Message v-if="errors.email" severity="error" class="text-center mt-2">
+                        {{ errors.email }}
+                    </Message>
+
+                    <div class="mb-4" v-if="Object.keys(form.errors).length">
+                        <p class="text-sm text-red-500">Something went wrong!</p>
+                        <ul class="ml-4 list-disc list-inside">
+                            <li
+                                v-for="(error, i) in errors"
+                                :key="i"
+                                class="text-sm text-red-500"
+                            >
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
 
                     <div class="flex justify-between mt-3 text-sm">
                         <Link v-if="canResetPassword" :href="route('password.request')" class="text-blue-500 hover:underline">
@@ -49,26 +78,28 @@
                             Me registrar
                         </Link>
                     </div>
-                </form>
+                </Form>
             </template>
         </Card>
     </GuestLayout>
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3'
-import { Link } from '@inertiajs/vue3'
-
+import { ref } from 'vue'
+import { useForm, Link } from '@inertiajs/vue3'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
+
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Message from 'primevue/message'
 
 defineProps({
     canResetPassword: Boolean,
-    status: String
+    status: String,
+    errors: Object
 })
 
 const form = useForm({
@@ -77,9 +108,34 @@ const form = useForm({
     remember: false
 })
 
-function submit() {
+const backendError = ref(null)
+
+// Validação manual (sem yup)
+const resolver = ({ values }) => {
+    const errors = {}
+
+    if (!values.email) {
+        errors.email = [{ message: 'O e-mail é obrigatório.' }]
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+        errors.email = [{ message: 'O e-mail informado é inválido.' }]
+    }
+
+    if (!values.password) {
+        errors.password = [{ message: 'A senha é obrigatória.' }]
+    }
+
+    return { errors }
+}
+
+
+function onSubmit(e) {
+    if (!e.valid || !e.states) return
+
+    form.email = e.states.email.value
+    form.password = e.states.password.value
+    console.log(form)
     form.post(route('login'), {
-        onFinish: () => form.reset('password')
+        onFinish: () => form.reset('password'),
     })
 }
 </script>

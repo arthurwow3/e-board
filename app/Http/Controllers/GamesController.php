@@ -6,14 +6,12 @@ use App\Actions\Games\DeleteGame;
 use App\Actions\Games\ListGames;
 use App\Actions\Games\StoreGame;
 use App\Actions\Games\UpdateGame;
-use App\Exceptions\GameStoreException;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
 use App\Models\Genre;
 use App\Models\Publisher;
-use http\Client\Response;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -50,7 +48,7 @@ class GamesController extends Controller
 
             return redirect()->route('games.index')
                 ->with('success', 'Jogo cadastrado com sucesso!');
-        } catch (GameStoreException $e) {
+        } catch (\Exception $e) {
             return back()
                 ->with('error', $e->getMessage())
                 ->withInput();

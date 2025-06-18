@@ -53,8 +53,8 @@
 
                     <Button type="submit" label="Entrar" class="w-full mt-2" />
 
-                    <Message v-if="errors.email" severity="error" class="text-center mt-2">
-                        {{ errors.email }}
+                    <Message v-if="form.errors.email" severity="error" class="text-center mt-2">
+                        {{ form.errors.email }}
                     </Message>
 
                     <div class="mb-4" v-if="Object.keys(form.errors).length">
@@ -137,5 +137,6 @@ function onSubmit(e) {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
     })
+    console.log(form)
 }
 </script>
